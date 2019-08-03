@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "635521299824",
+    "firebase_url": "https://hoc-dev-task.firebaseio.com",
+    "project_id": "hoc-dev-task",
+    "storage_bucket": "hoc-dev-task.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:635521299824:android:bda4b4b69881565f",
+        "android_client_info": {
+          "package_name": "gr16.android.chattyfix"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "635521299824-ms5hnrlt97e9e2g3uhajedpfmhsbnjj0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "gr16.android.chattyfix",
+            "certificate_hash": "dc0e3f25064d1c47797d65a9f7e4290886399695"
+          }
+        },
+        {
+          "client_id": "635521299824-1d0cjp2hf6fadeqfa3i3k8gnhusm5s8l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMSyojcyFSNbY_9VGj78sYb5EDkXeRtqQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "635521299824-1d0cjp2hf6fadeqfa3i3k8gnhusm5s8l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
