@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -157,9 +158,9 @@ public class ChatRoomsActivity extends AppCompatActivity implements ItemClickLis
 
     @Override
     public void onBackPressed() { //Delete super, make back press on this screen de-auth the user, so they can log in again with their prefered option.
-        super.onBackPressed();
-//        Intent i = new Intent(this, LoginActivity.class);
-//        startActivity(i);
-//        finish();
+        FirebaseAuth.getInstance().signOut();
+        Intent i = new Intent(this, LoginActivity.class);
+        startActivity(i);
+        finish();
     }
 }

@@ -271,6 +271,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             startActivity(i);
             finish();
         }
+        else
+        {
+            Toast.makeText(this, "Something went wrong with using your Google Account. Please sign up instead.", Toast.LENGTH_LONG);
+        }
     }
 
     private void createAccount(String email, String password)
