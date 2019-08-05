@@ -12,7 +12,9 @@ import gr16.android.chattyfix.model.ChatRoom;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -40,6 +42,7 @@ import javax.annotation.Nullable;
 public class ChatRoomActivity extends AppCompatActivity implements ItemClickListener {
 
     private FirebaseFirestore database;
+    DocumentReference chatRoomDocument;
     private ChatRoom chatRoom;
 
     private RecyclerView recyclerView;
@@ -74,7 +77,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ItemClickList
 
         //FirebaseFirestore
         database = FirebaseFirestore.getInstance();
-        final DocumentReference chatRoomDocument = database.collection("chatRooms").document(chatRoomID);
+        chatRoomDocument = database.collection("chatRooms").document(chatRoomID);
         Log.d("DEBUG", "onCreate: attempting firestore get()");
         chatRoomDocument.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -121,38 +124,55 @@ public class ChatRoomActivity extends AppCompatActivity implements ItemClickList
 
 
         chatText = findViewById(R.id.chatroom_user_text_edit);
+        chatText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == EditorInfo.IME_ACTION_SEND)
+                {
+                    sendMessage();
+                    return true;
+                }
+                return false;
+            }
+        });
+
         sendButton = findViewById(R.id.chatroom_send_button);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String userName;
-                if (!authUser.getDisplayName().contentEquals(""))
-                {
-                    userName = authUser.getDisplayName();
-                }
-                else
-                {
-                    userName = "Anonymous User";
-                }
-                ChatMessage newMessage = new ChatMessage(chatText.getText().toString(), userName);
-                chatRoom.getChatMessages().add(newMessage);
-                chatRoom.setLastActivityTime(newMessage.getMessageTime());
-                chatRoomDocument.set(chatRoom).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("DEBUG", "onSuccess: chatRoom and messages updated to Firestore");
-                        Toast.makeText(ChatRoomActivity.this,"Your message was sent", Toast.LENGTH_SHORT);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d("DEBUG", "onFailure: chatRoom and messages not updated to Firestore");
-                    }
-                });
-                chatText.setText("");
+                sendMessage();
             }
         });
 
+    }
+
+    private void sendMessage()
+    {
+        String userName;
+        if (!authUser.getDisplayName().contentEquals(""))
+        {
+            userName = authUser.getDisplayName();
+        }
+        else
+        {
+            userName = "Anonymous User";
+        }
+        ChatMessage newMessage = new ChatMessage(chatText.getText().toString(), userName);
+        chatRoom.getChatMessages().add(newMessage);
+        chatRoom.setLastActivityTime(newMessage.getMessageTime());
+        chatRoomDocument.set(chatRoom).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d("DEBUG", "onSuccess: chatRoom and messages updated to Firestore");
+                Toast.makeText(ChatRoomActivity.this,"Your message was sent", Toast.LENGTH_SHORT);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("DEBUG", "onFailure: chatRoom and messages not updated to Firestore");
+            }
+        });
+        chatText.setText("");
     }
 
     @Override
