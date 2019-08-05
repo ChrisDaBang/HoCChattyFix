@@ -298,7 +298,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 });
     }
 
-    private void signIn(String email, String password)
+    private boolean signIn(String email, String password)
     {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -307,20 +307,24 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
                             //updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-                            FirebaseUser user = null; //updateUI is overloaded, passing just null would be ambiguous
-                            updateUI(user);
                         }
-
-                        // ...
                     }
                 });
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     private void populateAutoComplete() {
@@ -533,8 +537,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            signIn(mEmail, mPassword);
-            return true;
+            Boolean success = signIn(mEmail, mPassword);
+            return success;
         }
 
         @Override

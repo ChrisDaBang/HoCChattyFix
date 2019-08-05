@@ -6,12 +6,15 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import gr16.android.chattyfix.adapters.ChatRoomsRecyclerAdapter;
+import gr16.android.chattyfix.interfaces.ItemClickListener;
 import gr16.android.chattyfix.model.ChatMessage;
 import gr16.android.chattyfix.model.ChatRoom;
+import io.opencensus.tags.Tag;
 
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,8 +32,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 
-public class ChatRoomsActivity extends AppCompatActivity implements ChatRoomsRecyclerAdapter.ItemClickListener {
+public class ChatRoomsActivity extends AppCompatActivity implements ItemClickListener {
 
     private RecyclerView recyclerView;
     private ChatRoomsRecyclerAdapter mAdapter;
@@ -38,8 +42,10 @@ public class ChatRoomsActivity extends AppCompatActivity implements ChatRoomsRec
     private EditText chatRoomName;
 
     private FirebaseFirestore database;
+    CollectionReference chatRoomsDB;
     private ArrayList<ChatRoom> chatRooms = new ArrayList<>();
     private ArrayList<String> chatRoomNames = new ArrayList<>();
+    private HashMap<String,String> chatRooomIDs = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,24 +89,32 @@ public class ChatRoomsActivity extends AppCompatActivity implements ChatRoomsRec
                     }
                 });
                 chatRoomName.setText("");
-                loadChatRooms(false); //Reload it instantly. Should be moved to a pull feature with its own button?
+                //loadChatRooms(false); //Reload it instantly. Should be moved to a pull feature with its own button?
+            }
+        });
+
+        Button refreshChatRoomsBtn = findViewById(R.id.chatrooms_rfrs_button);
+        refreshChatRoomsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadChatRooms(false);
             }
         });
     }
 
     private void loadChatRooms(final Boolean firstLoad)
     {
-        CollectionReference chatRoomsDB = database.collection("chatRooms");
+        chatRoomsDB = database.collection("chatRooms");
         chatRoomsDB.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful())
                 {
-
                     chatRooms = new ArrayList<>();
                     for (QueryDocumentSnapshot document : task.getResult())
                     {
                         chatRoomNames.add(document.get("roomName").toString());
+                        chatRooomIDs.put(document.get("roomName").toString(), document.getId());
                         chatRooms.add(document.toObject(ChatRoom.class));
                     }
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)  //Currently list is only sorted by newest for android api versions at or above 24.
@@ -135,7 +149,17 @@ public class ChatRoomsActivity extends AppCompatActivity implements ChatRoomsRec
         Toast.makeText(this, "You clicked " + mAdapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
         Intent i = new Intent(ChatRoomsActivity.this, ChatRoomActivity.class);
         i.putExtra("roomName", chatRoomNames.get(position));
+        i.putExtra("roomID", chatRooomIDs.get(chatRoomNames.get(position)));
+        Log.d("DEBUG", "onItemClick: Moving to " + chatRoomNames.get(position));
         startActivity(i);
         finish();
+    }
+
+    @Override
+    public void onBackPressed() { //Delete super, make back press on this screen de-auth the user, so they can log in again with their prefered option.
+        super.onBackPressed();
+//        Intent i = new Intent(this, LoginActivity.class);
+//        startActivity(i);
+//        finish();
     }
 }

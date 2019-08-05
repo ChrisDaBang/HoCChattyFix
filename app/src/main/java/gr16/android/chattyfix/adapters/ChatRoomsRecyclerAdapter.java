@@ -2,9 +2,11 @@ package gr16.android.chattyfix.adapters;
 
 
 import android.content.Context;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import gr16.android.chattyfix.R;
+import gr16.android.chattyfix.interfaces.ItemClickListener;
 
 
 //Big thanks to Suragch -> https://stackoverflow.com/questions/40584424/simple-android-recyclerview-example for improving standard implementation.
@@ -37,7 +40,8 @@ public class ChatRoomsRecyclerAdapter extends RecyclerView.Adapter<ChatRoomsRecy
     @Override
     public void onBindViewHolder(@NonNull ChatRoomsViewHolder holder, int position) {
         String chatRoom = chatRoomNames.get(position);
-        holder.textView.setText(chatRoom);
+        holder.roomBtn.setText(chatRoom);
+
     }
 
     @Override
@@ -47,13 +51,14 @@ public class ChatRoomsRecyclerAdapter extends RecyclerView.Adapter<ChatRoomsRecy
 
     public class ChatRoomsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
     {
-        public TextView textView;
+        public Button roomBtn;
 
         public ChatRoomsViewHolder(View v)
         {
             super(v);
-            textView = itemView.findViewById(R.id.tvroomname);
+            roomBtn = itemView.findViewById(R.id.btn_roomname);
             itemView.setOnClickListener(this);
+            roomBtn.setOnClickListener(this);
         }
 
         @Override
@@ -70,10 +75,5 @@ public class ChatRoomsRecyclerAdapter extends RecyclerView.Adapter<ChatRoomsRecy
     // allows clicks events to be caught
     public void setClickListener(ItemClickListener itemClickListener) {
         this.clickListener = itemClickListener;
-    }
-
-    // parent activity will implement this method to respond to click events
-    public interface ItemClickListener {
-        void onItemClick(View view, int position);
     }
 }

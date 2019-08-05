@@ -5,10 +5,13 @@
     android:layout_height="wrap_content"
     android:padding="10dp">
 
-    <TextView
-        android:id="@+id/tvroomname"
+    <Button
+        android:id="@+id/btn_roomname"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20sp" />
+        android:layout_height="48dp"
+        android:textSize="24dp"
+        android:textAlignment="viewStart"
+        android:drawableEnd="@drawable/chevronsmall"
+        android:text="Hello"/>
 
 </LinearLayout>
