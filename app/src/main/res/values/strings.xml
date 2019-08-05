@@ -14,5 +14,6 @@
     </string>
     <string name="facebook_app_id">485303108710506</string>
     <string name="fb_login_protocol_scheme">fb485303108710506</string>
+    <string name="title_activity_chat_room">ChatRoomActivity</string>
 
 </resources>

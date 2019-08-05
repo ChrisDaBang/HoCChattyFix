@@ -13,7 +13,7 @@ public class ChatRoom
         this.roomName = roomName;
         this.chatMessages = chatMessages;
 
-        // get the time from the latest chat message.
+        correctLastActivityTime(chatMessages);
     }
 
     public ChatRoom()
@@ -30,7 +30,24 @@ public class ChatRoom
     }
 
     public void setChatMessages(ArrayList<ChatMessage> chatMessages) {
+        correctLastActivityTime(chatMessages);
         this.chatMessages = chatMessages;
+    }
+
+    /**
+     * check the time for each message. Save that time as latest activity time if it is greater than the current.
+     * @param chatMessages
+     */
+    private void correctLastActivityTime(ArrayList<ChatMessage> chatMessages)
+    {
+        long lastActivityTime = 0;
+        for (ChatMessage message : chatMessages)
+        {
+            if (message.getMessageTime() > lastActivityTime)
+            {
+                this.lastActivityTime = message.getMessageTime();
+            }
+        }
     }
 
     public void setLastActivityTime(long lastActivityTime) {
